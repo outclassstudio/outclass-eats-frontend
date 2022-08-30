@@ -1,4 +1,18 @@
+import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
+import FormError from "../components/form-error";
+
+//?아폴로 변수에 $붙임
+//mutation이름은 frontend에서만 유효
+const LOGIN_MUTATION = gql`
+  mutation PotatoMutation($email: String, $password: String) {
+    login(input: { email: $email, password: $password }) {
+      ok
+      token
+      error
+    }
+  }
+`;
 
 interface ILoginForm {
   email?: string;
@@ -14,8 +28,17 @@ export default function Login() {
     handleSubmit,
   } = useForm<ILoginForm>();
 
+  const [loginMutation, { loading, error, data }] = useMutation(LOGIN_MUTATION);
+
   const onSubmit = () => {
-    console.log(getValues());
+    // console.log(getValues());
+    const { email, password } = getValues();
+    loginMutation({
+      variables: {
+        email,
+        password,
+      },
+    });
   };
 
   return (
@@ -33,9 +56,7 @@ export default function Login() {
             className="mb-3 input"
           />
           {errors.email?.message && (
-            <span className="text-medium text-red-600">
-              {errors.email?.message}
-            </span>
+            <FormError errorMessage={errors.email?.message} />
           )}
           <input
             {...register("password", {
@@ -47,9 +68,7 @@ export default function Login() {
             className="input"
           />
           {errors.password?.type === "minLength" && (
-            <span className="text-medium text-red-600">
-              비밀번호는 8자 이상이어야 해요
-            </span>
+            <FormError errorMessage={"비밀번호는 8자 이상이어야 해요"} />
           )}
           <button className="mt-3 btn">Login</button>
         </form>
