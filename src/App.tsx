@@ -5,11 +5,11 @@ import { LoggedOutRouter } from "./router/logged-out-router";
 
 //?Query정의
 //!클라이언트 캐시에 요청하기(중간에 주석쓰면 에러남)
-const IS_LOGGED_IN = gql`
-  query inLoggedIn {
-    isLoggedIn @client
-  }
-`;
+// const IS_LOGGED_IN = gql`
+//   query inLoggedIn {
+//     isLoggedIn @client
+//   }
+// `;
 
 function App() {
   //?기존방식
