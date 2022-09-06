@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import FormError from "../components/form-error";
 import {
@@ -9,8 +9,8 @@ import {
 //?아폴로 변수에 $붙임
 //mutation이름은 frontend에서만 유효
 const LOGIN_MUTATION = gql`
-  mutation loginMutation($email: String, $password: String) {
-    login(input: { email: $email, password: $password }) {
+  mutation loginMutation($loginInput: LoginInput!) {
+    login(input: $loginInput) {
       ok
       token
       error
@@ -32,20 +32,41 @@ export default function Login() {
     handleSubmit,
   } = useForm<ILoginForm>();
 
-  const [loginMutation, { loading, error, data }] = useMutation<
+  const onCompleted = (data: loginMutation) => {
+    const {
+      login: { ok, token },
+    } = data;
+    if (ok) {
+      console.log(token);
+    }
+  };
+
+  const [loginMutation, { data: loginMutationResult, loading }] = useMutation<
     loginMutation,
     loginMutationVariables
-  >(LOGIN_MUTATION);
+  >(LOGIN_MUTATION, {
+    onCompleted,
+    onError: () => null,
+  });
 
   const onSubmit = () => {
     // console.log(getValues());
-    const { email, password } = getValues();
-    loginMutation({
-      variables: {
-        email,
-        password,
-      },
-    });
+    if (!loading) {
+      const { email, password } = getValues();
+      //!타입 고쳐야 함
+      if (email && password) {
+        loginMutation({
+          variables: {
+            loginInput: {
+              email,
+              password,
+            },
+          },
+        });
+      } else {
+        //Todo 둘다 없을 시 알림
+      }
+    }
   };
 
   return (
@@ -77,7 +98,12 @@ export default function Login() {
           {errors.password?.type === "minLength" && (
             <FormError errorMessage={"비밀번호는 8자 이상이어야 해요"} />
           )}
-          <button className="mt-3 btn">Login</button>
+          <button className="mt-3 btn">
+            {loading ? "Loading..." : "Login"}
+          </button>
+          {loginMutationResult?.login.error && (
+            <FormError errorMessage={loginMutationResult.login.error} />
+          )}
         </form>
       </div>
     </div>
