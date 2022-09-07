@@ -5,6 +5,9 @@ import {
   loginMutation,
   loginMutationVariables,
 } from "../__generated__/loginMutation";
+import Logo from "../images/ubereatslogo.svg";
+import Button from "../components/button";
+import { Link } from "react-router-dom";
 
 //?아폴로 변수에 $붙임
 //mutation이름은 frontend에서만 유효
@@ -28,9 +31,11 @@ export default function Login() {
     register,
     getValues,
     watch,
-    formState: { errors },
+    formState: { errors, isValid },
     handleSubmit,
-  } = useForm<ILoginForm>();
+  } = useForm<ILoginForm>({
+    mode: "onBlur",
+  });
 
   const onCompleted = (data: loginMutation) => {
     const {
@@ -70,18 +75,21 @@ export default function Login() {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-800">
-      <div className="bg-white w-full max-w-lg pt-8 pb-7 py-10 rounded-lg">
-        <h3 className="flex justify-center text-2xl text-gray-800">Login</h3>
+    <div className="h-screen flex flex-col items-center mt-10 lg:mt-28">
+      <div className="w-full max-w-sreen-sm flex flex-col px-5 items-center">
+        <img src={Logo} className="w-52 mb-5" />
+        <h4 className="w-full font-medium text-left text-3xl mb-10">
+          Welcome back
+        </h4>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col mt-5 px-5"
+          className="grid gap-3 mt-5 w-full mb-5"
         >
           <input
             {...register("email", { required: "email is required" })}
             type="email"
             placeholder="Email"
-            className="mb-3 input"
+            className="input"
           />
           {errors.email?.message && (
             <FormError errorMessage={errors.email?.message} />
@@ -98,13 +106,17 @@ export default function Login() {
           {errors.password?.type === "minLength" && (
             <FormError errorMessage={"비밀번호는 8자 이상이어야 해요"} />
           )}
-          <button className="mt-3 btn">
-            {loading ? "Loading..." : "Login"}
-          </button>
+          <Button canClick={isValid} loading={loading} actionText={"Login"} />
           {loginMutationResult?.login.error && (
             <FormError errorMessage={loginMutationResult.login.error} />
           )}
         </form>
+        <div>
+          New to Outclass?{" "}
+          <Link to="/create-account" className="text-lime-600 hover:underline">
+            Create an Account
+          </Link>
+        </div>
       </div>
     </div>
   );
