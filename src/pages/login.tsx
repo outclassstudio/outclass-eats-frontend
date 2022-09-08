@@ -8,6 +8,8 @@ import {
 import Logo from "../images/ubereatslogo.svg";
 import Button from "../components/button";
 import { Link } from "react-router-dom";
+import Helmet from "react-helmet";
+import { isLoggedInVar } from "../apollo";
 
 //?아폴로 변수에 $붙임
 //mutation이름은 frontend에서만 유효
@@ -34,7 +36,7 @@ export default function Login() {
     formState: { errors, isValid },
     handleSubmit,
   } = useForm<ILoginForm>({
-    mode: "onBlur",
+    mode: "onChange",
   });
 
   const onCompleted = (data: loginMutation) => {
@@ -43,6 +45,7 @@ export default function Login() {
     } = data;
     if (ok) {
       console.log(token);
+      isLoggedInVar(true);
     }
   };
 
@@ -76,9 +79,12 @@ export default function Login() {
 
   return (
     <div className="h-screen flex flex-col items-center mt-10 lg:mt-28">
+      <Helmet>
+        <title>Login | Outclass Eats</title>
+      </Helmet>
       <div className="w-full max-w-sreen-sm flex flex-col px-5 items-center">
         <img src={Logo} className="w-52 mb-5" />
-        <h4 className="w-full font-medium text-left text-3xl mb-10">
+        <h4 className="w-full font-medium text-left text-3xl mb-3">
           Welcome back
         </h4>
         <form
@@ -86,13 +92,20 @@ export default function Login() {
           className="grid gap-3 mt-5 w-full mb-5"
         >
           <input
-            {...register("email", { required: "email is required" })}
+            {...register("email", {
+              required: "email is required",
+              pattern:
+                /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+            })}
             type="email"
             placeholder="Email"
             className="input"
           />
           {errors.email?.message && (
             <FormError errorMessage={errors.email?.message} />
+          )}
+          {errors.email?.type === "pattern" && (
+            <FormError errorMessage={"유효하지 않은 이메일이에요"} />
           )}
           <input
             {...register("password", {
