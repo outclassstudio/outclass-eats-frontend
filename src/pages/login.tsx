@@ -8,8 +8,9 @@ import {
 import Logo from "../images/ubereatslogo.svg";
 import Button from "../components/button";
 import { Link } from "react-router-dom";
-import Helmet from "react-helmet";
-import { isLoggedInVar } from "../apollo";
+import { Helmet } from "react-helmet-async";
+import { authTokenVar, isLoggedInVar } from "../apollo";
+import { LOCALSTORAGE_TOKEN } from "../constants";
 
 //?아폴로 변수에 $붙임
 //mutation이름은 frontend에서만 유효
@@ -43,8 +44,9 @@ export default function Login() {
     const {
       login: { ok, token },
     } = data;
-    if (ok) {
-      console.log(token);
+    if (ok && token) {
+      localStorage.setItem(LOCALSTORAGE_TOKEN, token);
+      authTokenVar(token);
       isLoggedInVar(true);
     }
   };
