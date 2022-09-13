@@ -1,4 +1,4 @@
-import { gql, useQuery, useReactiveVar } from "@apollo/client";
+import { useReactiveVar } from "@apollo/client";
 import { isLoggedInVar } from "./apollo";
 import { LoggedInRouter } from "./router/logged-in-router";
 import { LoggedOutRouter } from "./router/logged-out-router";
@@ -18,8 +18,6 @@ function App() {
   // } = useQuery(IS_LOGGED_IN);
   //!hook을 사용하는 방식
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-
-  console.log(isLoggedIn);
 
   return isLoggedIn ? <LoggedInRouter /> : <LoggedOutRouter />;
 }
