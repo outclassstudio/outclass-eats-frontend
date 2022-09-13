@@ -1,5 +1,12 @@
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import { isLoggedInVar } from "../apollo";
+import Restaurants from "../pages/client/restaurants";
 
 const ME_QUERY = gql`
   query meQuery {
@@ -11,6 +18,10 @@ const ME_QUERY = gql`
     }
   }
 `;
+
+const ClientRoutes = () => {
+  return <Route path="/" element={<Restaurants />} />;
+};
 
 export const LoggedInRouter = () => {
   const { data, loading, error } = useQuery(ME_QUERY);
@@ -24,8 +35,12 @@ export const LoggedInRouter = () => {
   }
 
   return (
-    <div>
-      <h1>{data.me.email}</h1>
-    </div>
+    <Router>
+      <Routes>
+        {data.me.role === "Client" && <ClientRoutes />}
+        //!수정필요
+        <Route path="/" element={<Navigate replace to="/" />} />
+      </Routes>
+    </Router>
   );
 };

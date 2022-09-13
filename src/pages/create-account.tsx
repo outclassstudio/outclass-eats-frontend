@@ -45,7 +45,7 @@ export default function CreateAccount() {
       createAccount: { ok },
     } = data;
     if (ok) {
-      navigate("/login");
+      navigate("/");
     }
   };
   const [
@@ -139,7 +139,7 @@ export default function CreateAccount() {
         </form>
         <div>
           계정이 이미 있으신가요?{" "}
-          <Link to="/login" className="text-lime-600 hover:underline">
+          <Link to="/" className="text-lime-600 hover:underline">
             Login Now
           </Link>
         </div>
