@@ -1,30 +1,12 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import { gql, useQuery } from "@apollo/client";
-import { isLoggedInVar } from "../apollo";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Restaurants from "../pages/client/restaurants";
+import Header from "../components/header";
+import { useMe } from "../hooks/useMe";
 
-const ME_QUERY = gql`
-  query meQuery {
-    me {
-      id
-      email
-      role
-      verified
-    }
-  }
-`;
-
-const ClientRoutes = () => {
-  return <Route path="/" element={<Restaurants />} />;
-};
+const ClientRoutes = [<Route path="/" element={<Restaurants />} />];
 
 export const LoggedInRouter = () => {
-  const { data, loading, error } = useQuery(ME_QUERY);
+  const { data, loading, error } = useMe();
 
   if (!data || loading || error) {
     return (
@@ -36,10 +18,11 @@ export const LoggedInRouter = () => {
 
   return (
     <Router>
+      <Header />
       <Routes>
-        {data.me.role === "Client" && <ClientRoutes />}
+        {data.me.role === "Client" && ClientRoutes}
         //!수정필요
-        <Route path="/" element={<Navigate replace to="/" />} />
+        {/* <Route path="/" element={<Navigate replace to="/" />} /> */}
       </Routes>
     </Router>
   );

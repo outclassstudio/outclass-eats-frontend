@@ -26,7 +26,10 @@ const authLink = setContext((_, { headers }) => {
 });
 
 export const client = new ApolloClient({
-  link: httpLink.concat(authLink),
+  //!concat순서에 유의
+  link: authLink.concat(httpLink),
+  // link: httpLink,
+  // uri: "http://localhost:4000/graphql",
   cache: new InMemoryCache({
     typePolicies: {
       Query: {
