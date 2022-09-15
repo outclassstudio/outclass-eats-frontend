@@ -1,3 +1,3 @@
 export default function Restaurants() {
-  return <div></div>;
+  return <div className="text-black">안녕?</div>;
 }
