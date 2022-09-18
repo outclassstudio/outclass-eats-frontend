@@ -2,8 +2,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Restaurants from "../pages/client/restaurants";
 import Header from "../components/header";
 import { useMe } from "../hooks/useMe";
+import ConfirmEamil from "../pages/user/confirm-email";
 
-const ClientRoutes = [<Route path="/" element={<Restaurants />} />];
+const ClientRoutes = [
+  <Route path="/" element={<Restaurants />} />,
+  <Route path="/confirm" element={<ConfirmEamil />} />,
+];
 
 export const LoggedInRouter = () => {
   const { data, loading, error } = useMe();
